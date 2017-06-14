@@ -2,15 +2,18 @@
 
 
 FROM phusion/baseimage:latest
-MAINTAINER Sergey Arkhipov <nineseconds@yandex.ru>
+MAINTAINER Vladislav Stroev <netcemetery@yandex.ru>
+
+# Create vagrant user
+RUN adduser --disabled-password --gecos "" vagrant
 
 # Environment variables
-ENV HOME /root
+ENV HOME /home/vagrant
 ENV DEBIAN_FRONTEND noninteractive
 ENV TERM linux
 
 # Do common baseimage actions
-RUN echo "/root" > /etc/container_environment/HOME && \
+RUN echo "/home/vagrant" > /etc/container_environment/HOME && \
     echo "noninteractive" > /etc/container_environment/DEBIAN_FRONTEND && \
     echo "linux" > /etc/container_environment/TERM && \
     rm -f /etc/service/sshd/down && \
@@ -25,12 +28,11 @@ RUN apt-get -qq update && \
         nano \
         curl \
         wget && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+    apt-get clean
 
 # Add Vagrant key
-RUN mkdir -p /root/.ssh && \
-    curl -sL https://raw.githubusercontent.com/mitchellh/vagrant/master/keys/vagrant.pub > /root/.ssh/authorized_keys
+RUN mkdir -p /home/vagrant/.ssh && \
+    curl -sL https://raw.githubusercontent.com/mitchellh/vagrant/master/keys/vagrant.pub > /home/vagrant/.ssh/authorized_keys
 
 # Cleanups
 RUN rm -rf /tmp/* /var/tmp/*
